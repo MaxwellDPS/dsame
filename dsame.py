@@ -306,24 +306,23 @@ def main():
     args=parse_arguments()
     logging.basicConfig(level=args.loglevel,format='%(levelname)s: %(message)s')
     if args.msg:
-        same_decode(args.msg, args.lang, same_watch=args.same, event_watch=args.event, text=args.text, call=args.call, command=args.command, jsonfile=args.json)
+        input_source = [args.msg]
     elif args.source:
         try:
             source_process = subprocess.Popen(args.source, stdout=subprocess.PIPE)
+            input_source = source_process.stdout
         except Exception as detail:
-                logging.error(detail)
-                return
-        while True:
-            line = source_process.stdout.readline()
-            if line:
-                logging.debug(line)
-                same_decode(line, args.lang, same_watch=args.same, event_watch=args.event, text=args.text, call=args.call, command=args.command, jsonfile=args.json)
+            logging.error(detail)
+            return
     else:
-        while True:
-            for line in sys.stdin:
-                logging.debug(line)
-                same_decode(line, args.lang, same_watch=args.same, event_watch=args.event, text=args.text, call=args.call, command=args.command, jsonfile=args.json)
+        input_source = sys.stdin
 
+    for line in input_source:
+        # subprocess stdout will yield bytes instead of str.
+        if type(line) is bytes:
+            line = line.decode("ascii")
+        logging.debug(line)
+        same_decode(line, args.lang, same_watch=args.same, event_watch=args.event, text=args.text, call=args.call, command=args.command, jsonfile=args.json)
 
 if __name__ == "__main__":
     try:

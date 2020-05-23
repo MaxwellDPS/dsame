@@ -5837,6 +5837,7 @@ SAME_UEEE={
 
 SAME__EEE={
     '' : None,
+    'BLU' : 'Blue Alert',
     'BZW' : 'Blizzard Warning',
     'CFA' : 'Coastal Flood Watch',
     'CFW' : 'Coastal Flood Warning',
